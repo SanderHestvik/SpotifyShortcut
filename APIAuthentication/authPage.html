@@ -24,7 +24,7 @@
         // Set token
         let _token = hash.access_token;
 
-        //Set this to your preffered playlist ID (right click playlist and choose share -> copy spotify URI to find it
+        //Change this to your preffered playlist ID (right click playlist and choose share -> copy spotify URI to find it
         //This is the playlist where tracks are added
         let playlistId = "5BArUof4UAEoBUpbKGdrRm";
         const authEndpoint = 'https://accounts.spotify.com/authorize';
@@ -40,7 +40,7 @@
 
         // If there is no token, redirect to Spotify authorization
         if (!_token) {
-            console.log("No tengo el tokeno");
+            console.log("Getting token");
             window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
             console.log(window.location);
 
@@ -60,7 +60,7 @@
                 xhr.setRequestHeader('Authorization', 'Bearer ' + _token);
             },
         }).fail(failedRequest())
-            .done((response) => { //If sucsessfull then request to add that song to specified playlist
+            .done((response) => { //If successful then request to add that song to specified playlist
                 let songUri = response.item.uri;
                 console.log("SongUri: " + songUri);
                 $.ajax({//Sends the add to playlist request
