@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication page</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script>
+        <!--        Inline script to reduce complexity-->
+        const hash = window.location.hash
+            .substring(1)
+            .split('&')
+            .reduce(function (initial, item) {
+                if (item) {
+                    var parts = item.split('=');
+                    initial[parts[0]] = decodeURIComponent(parts[1]);
+                }
+                return initial;
+            }, {});
+        window.location.hash = '';
+
+        // Set token
+        let _token = hash.access_token;
+
+        //Change this to your preffered playlist ID (right click playlist and choose share -> copy spotify URI to find it
+        //This is the playlist where tracks are added
+        let playlistId = "5BArUof4UAEoBUpbKGdrRm";
+        const authEndpoint = 'https://accounts.spotify.com/authorize';
+
+        // Replace with your app's client ID, redirect URI and desired scopes
+        const clientId = '465cc59a86cf492585a04a7a925d778e';
+        const redirectUri = 'http://localhost:3000';
+        const scopes = [
+            'user-read-currently-playing',
+            'playlist-modify-private',
+            'playlist-modify-public'
+        ];
+
+        // If there is no token, redirect to Spotify authorization
+        if (!_token) {
+            console.log("Getting token");
+            window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
+            console.log(window.location);
+
+
+        }
+        console.log(_token);
+
+        function failedRequest() {
+            $("#resultMessage").text("Something went wrong")
+        }
+
+        //Make a call using the token
+        $.ajax({ //Gets the currently playing song
+            url: "https://api.spotify.com/v1/me/player/currently-playing",
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + _token);
+            },
+        }).fail(failedRequest())
+            .done((response) => { //If successful then request to add that song to specified playlist
+                let songUri = response.item.uri;
+                console.log("SongUri: " + songUri);
+                $.ajax({//Sends the add to playlist request
+                    url: "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks?uris=" + songUri,
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + _token);
+                    }
+
+                }).done(() => $("#resultMessage").text("Track successfully added"))//Inform user it was successful
+                    .fail(failedRequest())
+            });
+
+
+    </script>
+</head>
+<body>
+<H1 id="resultMessage"></H1>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "spotify-shortcut",
+  "version": "1.0.0",
+  "description": "Quickly add current listening song in spotify to predefined playlist with a single click",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SanderHestvik/SpotifyShortcut.git"
+  },
+  "author": "Sander Hestvik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SanderHestvik/SpotifyShortcut/issues"
+  },
+  "homepage": "https://github.com/SanderHestvik/SpotifyShortcut#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
